@@ -16,6 +16,7 @@
     "express": "^4.13.3",
     "jsonwebtoken": "^7.3.0",
     "mongoose": "^4.4.20",
+    "mongoose-schema-extend": "^0.2.2",
     "morgan": "^1.8.1"
   },
   "repository": {
