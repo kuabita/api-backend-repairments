@@ -1,5 +1,4 @@
-//include the routes file
+// Include all the routes file.
 var users = require('./user');
 
-//module.exports = router;
 module.exports = [].concat(users);
