@@ -7,13 +7,18 @@ var express     = require('express'),
     morgan      = require('morgan'),
     mongoose    = require('mongoose'),
     passport    = require('passport'),
-    jwt         = require('jwt-simple');
+    jwt         = require('jwt-simple'),
+    cors        = require('cors');
 
 // =======================
 // configuration =========
 // =======================
 var config      = require('./src/config/database'),
     routes      = require('./src/routes/index');
+    corsOptions = {
+        origin: 'http://example.com',
+        optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+    }
 
 mongoose.Promise = require('bluebird');
 
@@ -35,18 +40,19 @@ app.use(morgan('dev'));
 // Use the passport package in our application
 app.use(passport.initialize());
 
+/*
 app.use(function(req, res, next) {
-	res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type, Authorization');
     next();
 });
-
+*/
 app.set('port', (process.env.PORT || 5000));
 
 app.use(express.static(__dirname + '/public'));
 
-app.use('/', routes);
+app.use('/', cors(corsOptions), routes);
 
 app.listen(app.get('port'), function() {
     console.log('Node app is running on port', app.get('port'));
