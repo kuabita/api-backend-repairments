@@ -34,7 +34,8 @@ mongoose.connect(config.database, function (err, res) {
 
 // error 429 if we hit this route too often
 var globalBruteforce = new secure();
-app.use('/users/authenticate', globalBruteforce.prevent);
+app.post('/users/authenticate', globalBruteforce.prevent);
+app.post('/users', globalBruteforce.prevent);
 
 // use body parser so we can get info from POST and/or URL parameters
 app.use(bodyParser.urlencoded({ extended: false }));

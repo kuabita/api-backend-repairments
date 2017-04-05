@@ -23,7 +23,7 @@ module.exports = function(req, res, next) {
     
     // No more than 1000 login attempts per day per IP 
     var globalBruteforce = new ExpressBrute(store, {
-        freeRetries: 2,
+        freeRetries: 10,
         attachResetToRequest: false,
         refreshTimeoutOnRequest: false,
         minWait: 5 * 60 * 1000, // 5 minutes 
