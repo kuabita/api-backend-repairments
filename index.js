@@ -13,8 +13,10 @@ var express     = require('express'),
 // =======================
 // configuration =========
 // =======================
-var config      = require('./src/config/database'),
-    routes      = require('./src/routes/index');
+var config     = require('./src/config/database'),
+    routes     = require('./src/routes/index'),
+    secure     = require('./src/middlewares/security');
+    
     corsOptions = {
         origin: 'http://example.com',
         optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
@@ -29,6 +31,10 @@ mongoose.connect(config.database, function (err, res) {
         console.log ('Succeeded connected to: ' + config.database);
     }
 });
+
+// error 429 if we hit this route too often
+var globalBruteforce = new secure();
+app.use('/users/authenticate', globalBruteforce.prevent);
 
 // use body parser so we can get info from POST and/or URL parameters
 app.use(bodyParser.urlencoded({ extended: false }));
