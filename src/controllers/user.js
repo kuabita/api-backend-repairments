@@ -2,31 +2,25 @@ var User      = require('../models/user'),
 	jwt       = require('jwt-simple'),
 	config    = require('../config/database'),
 	jwtHelper = require('../helpers/jwt'),
-	crypto    = require('crypto');
-
-function encryptPassword(email, pass) {
-    var hmac = crypto.createHmac('sha1', email).update(pass).digest('hex');
-    return hmac;
-}
+	error     = require('../helpers/error');
 
 exports.createUser = function(req, res) {
-	var encryptedPass = encryptPassword(req.body.email, req.body.password)
+	var encryptedPass = jwtHelper.encryptPassword(req.body.email, req.body.password)
 
     User.findOne({email:req.body.email},function(err, user){
         if(!user) {
             var user = new User({ 
 		    	email: req.body.email,
 		    	password: encryptedPass,
-		    	role: req.body.rol,
+		    	role: req.body.role,
 	  		});
 	        
 		    user.save(function(err) {
-		    	if (err) throw err;
-
-		    	res.json(user);
+		    	if (err) return next(err);
+		    	return res.json(user);
 		    });
       	} else {
-        	res.json('ya existe');
+      		res.status(400).json(error.createError('The user already exist', 400));
         }
     })
 };
@@ -34,35 +28,35 @@ exports.createUser = function(req, res) {
 exports.getAllUsers = function(req, res, next) {
 	var token = jwtHelper.getToken(req.headers);
   	if (token) {
-    	User.find({}, function(err, users) {
-	        if (err) throw err;
+  		User.find({}, function(err, users) {
+	        if (err) return next(err);
 
-	        if (!users) {
-	            return res.status(403).send({success: false, msg: 'Authentication failed. User not found.'});
-	        } else {
-	            res.json({success: true, users: users});
-	        }
- 	    });
+	        if (users) {
+	        	return res.json({success: true, users: users})
+	        } else {	
+	        	res.status(403).json(error.createError('Authentication failed. User not found.', 403));
+			}
+		});
 	} else {
-	    return res.status(403).send({success: false, msg: 'No token provided.'});
+		res.status(403).json(error.createError('No token provided.', 403));
 	}
 };
 
 exports.authenticateUser = function(req, res) {
     User.findOne({email: req.body.email}, function(err, user) {
-	    if (err) throw err;
+	    if (err) return next(err);
 
-	    if (!user) {
-	        res.json({ success: false, message: 'Authentication failed. User not found.' });
-	    } else if (user) {
-	    	var encryptedPass = encryptPassword(req.body.email, req.body.password)
+	    if (user) {
+	  		var encryptedPass = jwtHelper.encryptPassword(req.body.email, req.body.password)
 
 	      	if(user.password === encryptedPass) {
 	            var token = jwt.encode(user, config.secret);
 	            res.json({success: true, token: 'JWT ' + token});
 	        } else {
-	            res.json({ success: false, message: 'Authentication failed. Wrong password.' });
+	        	res.status(403).json(error.createError('Authentication failed. Wrong password.', 403));
 	        }
+	  	} else {
+	    	res.status(403).json(error.createError('Authentication failed. User not found.', 403));
 	    }
     });
 };

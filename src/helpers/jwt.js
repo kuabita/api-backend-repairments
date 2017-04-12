@@ -1,3 +1,4 @@
+var crypto    = require('crypto');
 
 exports.getToken = function (headers) {
     if (headers && headers.authorization) {
@@ -11,3 +12,8 @@ exports.getToken = function (headers) {
     	  return null;
   	}
 };
+
+exports.encryptPassword = function (email, pass) {
+    var hmac = crypto.createHmac('sha1', email).update(pass).digest('hex');
+    return hmac;
+}

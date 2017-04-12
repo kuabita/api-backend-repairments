@@ -13,25 +13,21 @@ var express     = require('express'),
 // =======================
 // configuration =========
 // =======================
-var config     = require('./src/config/database'),
-    routes     = require('./src/routes/index'),
-    secure     = require('./src/middlewares/security');
+var config      = require('./src/config/database'),
+    routes      = require('./src/routes/index'),
+    secure      = require('./src/middlewares/security'),
+    corsOptions = require('./src/config/cors');
 
-  
-var corsOptions = {
-    origin: 'http://example.com',
-    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-};
-
+// =======================
+// Helpers ===============
+// =======================
+var error       = require('./src/helpers/error');
 
 mongoose.Promise = require('bluebird');
-
 mongoose.connect(config.database, function (err, res) {
-    if (err) {
-        console.log ('ERROR connecting to: ' + config.database + '. ' + err);
-    } else {
-        console.log ('Succeeded connected to: ' + config.database);
-    }
+    (err)
+        ? console.log ('ERROR connecting to: ' + config.database + '. ' + err)
+        : console.log ('Succeeded connected to: ' + config.database);
 });
 
 // error 429 if we hit this route too often
@@ -63,6 +59,15 @@ app.use(passport.initialize());
 app.use(express.static(__dirname + '/public'));
 app.use('/', routes);
 
+app.use((err, req, res, next) => {
+    res.status(500).json(error.serializeError(err))
+})
+/*
+process.on('uncaughtException', err => {
+    console.log({ err }, 'uncaught exception')
+    process.nextTick(_ => process.exit(1))
+})
+*/
 app.set('port', (process.env.PORT || 5000));
 
 app.listen(app.get('port'), function() {
