@@ -11,17 +11,17 @@ var express     = require('express'),
     cors        = require('cors');
 
 // =======================
+// Helpers ===============
+// =======================
+var error       = require('./src/helpers/error');
+
+// =======================
 // configuration =========
 // =======================
 var config      = require('./src/config/database'),
     routes      = require('./src/routes/index'),
     secure      = require('./src/middlewares/security'),
     corsOptions = require('./src/config/cors');
-
-// =======================
-// Helpers ===============
-// =======================
-var error       = require('./src/helpers/error');
 
 mongoose.Promise = require('bluebird');
 mongoose.connect(config.database, function (err, res) {
