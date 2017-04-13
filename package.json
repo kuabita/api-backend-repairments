@@ -19,6 +19,7 @@
     "jwt-simple": "^0.3.1",
     "moment": "^2.18.1",
     "mongoose": "^4.4.20",
+    "mongoose-role": "^2.0.0",
     "mongoose-schema-extend": "^0.2.2",
     "morgan": "^1.8.1",
     "passport": "^0.3.0",

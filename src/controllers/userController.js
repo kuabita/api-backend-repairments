@@ -1,4 +1,4 @@
-var User      = require('../models/user'),
+var User      = require('../models/userModel'),
 	jwt       = require('jwt-simple'),
 	config    = require('../config/database'),
 	jwtHelper = require('../helpers/jwt'),
