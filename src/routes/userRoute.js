@@ -18,7 +18,11 @@ router.post('/users', UserCtrl.createUser);
 // =======================
 router.get(
     '/users', 
-    [endpointValidator.hasAccess('user'), endpointValidator.validateParams('getUsers'), passport.authenticate('jwt', {session: false})], 
+    [
+    	endpointValidator.hasAccess('employer'), 
+    	endpointValidator.validateParams('getUsers'), 
+    	passport.authenticate('jwt', {session: false})
+    ], 
     UserCtrl.getAllUsers
 );  
 

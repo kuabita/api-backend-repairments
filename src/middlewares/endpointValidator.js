@@ -1,5 +1,6 @@
 var jwtHelper = require('../helpers/jwt'),
-    User      = require('../models/userModel');
+    User      = require('../models/userModel'),
+    error     = require('../helpers/error');
 
 exports.validateParams = function(endpoint) {
 	return function(req, res, next) {
@@ -20,10 +21,7 @@ exports.hasAccess = function(accessLevel) {
   		if (currentUser && currentUser.hasAccess(accessLevel)) {
 	      return next();
 	    }
-	    return res.json({
-	      success: false,
-	      error: 'Unauthorized'
-	    });
+	    res.status(403).json(error.createError('Authentication failed. Wrong password.', 403));
   	});	
   }
 };	

@@ -1,5 +1,5 @@
 // Include all the routes file.
-var users = require('./user'),
+var users = require('./userRoute'),
 	companies = require('./companyRoute'),
 	errors = require('./error');
 
