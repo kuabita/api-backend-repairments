@@ -18,10 +18,11 @@ var error       = require('./src/helpers/error');
 // =======================
 // configuration =========
 // =======================
-var config      = require('./src/config/database'),
-    routes      = require('./src/routes/index'),
-    secure      = require('./src/middlewares/security'),
-    corsOptions = require('./src/config/cors');
+var config            = require('./src/config/database'),
+    routes            = require('./src/routes/index'),
+    secure            = require('./src/middlewares/security'),
+    globalBruteforce  = new secure(),
+    corsOptions       = require('./src/config/cors');
 
 mongoose.Promise = require('bluebird');
 mongoose.connect(config.database, function (err, res) {
@@ -29,11 +30,6 @@ mongoose.connect(config.database, function (err, res) {
         ? console.log ('ERROR connecting to: ' + config.database + '. ' + err)
         : console.log ('Succeeded connected to: ' + config.database);
 });
-
-// error 429 if we hit this route too often
-var globalBruteforce = new secure();
-app.post('/users/authenticate', globalBruteforce.prevent);
-app.post('/users', globalBruteforce.prevent);
 
 /*
 var corsOptions = function(req, res, next) {
@@ -43,7 +39,6 @@ var corsOptions = function(req, res, next) {
     next();
 };
 */
-
 app.use(cors(corsOptions));
 
 // use body parser so we can get info from POST and/or URL parameters
@@ -58,17 +53,8 @@ app.use(passport.initialize());
 
 app.use(express.static(__dirname + '/public'));
 
-routes(app, passport);
+routes(app, passport, globalBruteforce);
 
-app.use((err, req, res, next) => {
-    res.status(500).json(error.serializeError(err))
-})
-/*
-process.on('uncaughtException', err => {
-    console.log({ err }, 'uncaught exception')
-    process.nextTick(_ => process.exit(1))
-})
-*/
 app.set('port', (process.env.PORT || 5000));
 
 app.listen(app.get('port'), function() {
