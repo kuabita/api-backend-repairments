@@ -1,6 +1,9 @@
-// Include all the routes file.
-var users = require('./userRoute'),
-	companies = require('./companyRoute'),
-	errors = require('./error');
+var endpointValidator = require('../middlewares/endpointValidator');
 
-module.exports = [].concat(users,companies,errors);
+module.exports = function(app, passport) {
+	require('../config/passport')(passport);
+
+	require('./userRoute')(app, passport, endpointValidator),
+	require('./companyRoute')(app, passport, endpointValidator),
+	require('./error')(app, passport, endpointValidator);
+}    

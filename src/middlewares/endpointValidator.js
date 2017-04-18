@@ -18,6 +18,7 @@ exports.validateParams = function(endpoint) {
 exports.hasAccess = function(accessLevel) {
   return function (req, res, next) {
   	User.findOne({_id: jwtHelper.getUserIdFromToken(req.headers)}, function(err, currentUser) {
+  		if (err) return next(err);
   		if (currentUser && currentUser.hasAccess(accessLevel)) {
 	      return next();
 	    }
@@ -25,3 +26,21 @@ exports.hasAccess = function(accessLevel) {
   	});	
   }
 };	
+
+exports.getFilterParametersFromUrl = function(urlParams) {
+    var auxFilters = {};
+
+    if (urlParams.filters) {
+    	arrayOfParams = JSON.parse(urlParams.filters);
+		
+		arrayOfParams.forEach(function(value){
+		    var fields = value.split('=');
+		    auxFilters[fields[0]] = fields[1];
+		});
+	}
+	return auxFilters;
+};	
+
+exports.isRequireFullResponse = function(urlParams) {
+	return (urlParams.typeResponse === 'full');
+}

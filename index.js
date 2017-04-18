@@ -57,7 +57,8 @@ app.use(morgan('dev'));
 app.use(passport.initialize());
 
 app.use(express.static(__dirname + '/public'));
-app.use('/', routes);
+
+routes(app, passport);
 
 app.use((err, req, res, next) => {
     res.status(500).json(error.serializeError(err))

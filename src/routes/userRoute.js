@@ -1,29 +1,23 @@
-var app      = require('express'),
-    router   = app.Router(),
-    User     = require('../models/userModel'),
-    UserCtrl = require('../controllers/userController'),
-    endpointValidator = require('../middlewares/endpointValidator'),
-    passport = require('passport');
+var User     = require('../models/userModel'),
+    UserCtrl = require('../controllers/userController');
 
-require('../config/passport')(passport);
+module.exports = function(app, passport, endpointValidator) {
+	// =======================
+	// Public Endpoints 
+	// =======================
+	app.post('/users/authenticate', UserCtrl.authenticateUser);
+	app.post('/users', UserCtrl.createUser);
 
-// =======================
-// Public Endpoints 
-// =======================
-router.post('/users/authenticate', UserCtrl.authenticateUser);
-router.post('/users', UserCtrl.createUser);
-
-// =======================
-// Private Endpoints 
-// =======================
-router.get(
-    '/users', 
-    [
-    	endpointValidator.hasAccess('employer'), 
-    	endpointValidator.validateParams('getUsers'), 
-    	passport.authenticate('jwt', {session: false})
-    ], 
-    UserCtrl.getAllUsers
-);  
-
-module.exports = router;
+	// =======================
+	// Private Endpoints 
+	// =======================
+	app.get(
+	    '/users', 
+	    [	
+	    	passport.authenticate('jwt', {session: false}),
+	    	endpointValidator.hasAccess('employer'), 
+	    	endpointValidator.validateParams('getUsers')
+	    ], 
+	    UserCtrl.getAllUsers
+	);  
+}

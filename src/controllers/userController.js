@@ -1,8 +1,9 @@
-var User      = require('../models/userModel'),
-	jwt       = require('jwt-simple'),
-	config    = require('../config/database'),
-	jwtHelper = require('../helpers/jwt'),
-	error     = require('../helpers/error');
+var User               = require('../models/userModel'),
+	jwt                = require('jwt-simple'),
+	config             = require('../config/database'),
+	jwtHelper          = require('../helpers/jwt'),
+	error              = require('../helpers/error'),
+	endpointValidator  = require('../middlewares/endpointValidator');
 
 exports.createUser = function(req, res) {
 	var encryptedPass = jwtHelper.encryptPassword(req.body.email, req.body.password)
@@ -16,8 +17,9 @@ exports.createUser = function(req, res) {
 	  		});
 	        
 		    user.save(function(err) {
-		    	if (err) return next(err);
-		    	return res.json(user);
+		    	return (err) 
+		    		? next(err)
+		    		: res.json({success: true, user: user});
 		    });
       	} else {
       		res.status(400).json(error.createError('The user already exist', 400));
@@ -26,20 +28,18 @@ exports.createUser = function(req, res) {
 };
 
 exports.getAllUsers = function(req, res, next) {
-	var token = jwtHelper.getToken(req.headers);
-  	if (token) {
-  		User.find({}, function(err, users) {
-	        if (err) return next(err);
+	var filters = endpointValidator.getFilterParametersFromUrl(req.query);
+	var query =  User.find(filters);
 
-	        if (users) {
-	        	return res.json({success: true, users: users})
-	        } else {	
-	        	res.status(403).json(error.createError('Authentication failed. User not found.', 403));
-			}
-		});
-	} else {
-		res.status(403).json(error.createError('No token provided.', 403));
+	if (endpointValidator.isRequireFullResponse(req.query)) {
+		query.populate('companies');
 	}
+		
+	query.exec(function(err, users) {
+        return (err)
+        	? next(err)
+        	: res.json({success: true, users: users});
+	});
 };
 
 exports.authenticateUser = function(req, res) {
@@ -47,7 +47,7 @@ exports.authenticateUser = function(req, res) {
 	    if (err) return next(err);
 
 	    if (user) {
-	  		var encryptedPass = jwtHelper.encryptPassword(req.body.email, req.body.password)
+	  		var encryptedPass = jwtHelper.encryptPassword(req.body.email, req.body.password);
 
 	      	if(user.password === encryptedPass) {
 	            var token = jwt.encode(user, config.secret);

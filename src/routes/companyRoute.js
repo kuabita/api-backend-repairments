@@ -1,15 +1,10 @@
-var app      = require('express'),
-    router   = app.Router(),
-    User     = require('../models/companyModel'),
-    CompanyCtrl = require('../controllers/companyController'),
-    passport = require('passport');
+var User        = require('../models/companyModel'),
+    CompanyCtrl = require('../controllers/companyController');
 
-require('../config/passport')(passport);
-
-// =======================
-// Private Endpoints 
-// =======================
-router.get('/companies', passport.authenticate('jwt', {session: false}), CompanyCtrl.getAllCompanies);  
-router.post('/companies', passport.authenticate('jwt', {session: false}), CompanyCtrl.createCompany);
-
-module.exports = router;
+module.exports = function(app, passport, endpointValidator) {
+	// =======================
+	// Private Endpoints 
+	// =======================
+	app.get('/companies', passport.authenticate('jwt', {session: false}), CompanyCtrl.getAllCompanies);  
+	app.post('/companies', passport.authenticate('jwt', {session: false}), CompanyCtrl.createCompany);
+}
