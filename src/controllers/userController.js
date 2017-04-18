@@ -42,6 +42,20 @@ exports.getAllUsers = function(req, res, next) {
 	});
 };
 
+exports.getUser = function(req, res, next) {
+	var query =  User.find({'_id': req.params._id});
+
+	if (endpointValidator.isRequireFullResponse(req.query)) {
+		query.populate('companies');
+	}
+		
+	query.exec(function(err, user) {
+        return (err)
+        	? next(err)
+        	: res.json({success: true, user: user});
+	});
+};
+
 exports.authenticateUser = function(req, res) {
     User.findOne({email: req.body.email}, function(err, user) {
 	    if (err) return next(err);
