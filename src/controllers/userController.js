@@ -8,7 +8,7 @@ var User               = require('../models/userModel'),
 exports.createUser = function(req, res) {
 	var encryptedPass = jwtHelper.encryptPassword(req.body.email, req.body.password)
 
-    User.findOne({email:req.body.email},function(err, user){
+	User.findOne({email:req.body.email},function(err, user){
         if(!user) {
             var user = new User({ 
 		    	email: req.body.email,
