@@ -21,5 +21,11 @@ module.exports = function(app, passport, endpointValidator, UserCtrl) {
 	    UserCtrl.getUser
 	);  
 
+	users.put(
+	    '/:_id', 
+	    endpointValidator.validateParams('getUsers'),
+	    UserCtrl.updateUser
+	);  
+
 	app.use('/users', users);
 }

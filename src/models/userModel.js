@@ -20,7 +20,8 @@ var UserSchema = new Schema({
         ref: 'Company' 
     }],
     role: {type: String, required: true, enum: ['root', 'admin', 'employer']},
-    enabled: {type: Boolean, default: true}
+    enabled: {type: Boolean, default: true},
+    version: {type: Number, default: 1}
 });
 
 UserSchema.plugin(require('mongoose-role'), {

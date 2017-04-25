@@ -41,6 +41,20 @@ exports.getFilterParametersFromUrl = function(urlParams) {
 	return auxFilters;
 };	
 
+exports.getBodyParameters = function(formParams) {
+    var bodyParameters = {};
+
+    if (formParams) {
+    	arrayOfParams = JSON.parse(formParams);
+		
+		arrayOfParams.forEach(function(value) {
+		    var fields = value.split(':');
+		    bodyParameters[fields[0]] = fields[1];
+		});
+	}
+	return bodyParameters;
+};	
+
 exports.isRequireFullResponse = function(urlParams) {
 	return (urlParams.typeResponse === 'full');
 }

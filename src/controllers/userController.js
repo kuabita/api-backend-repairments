@@ -27,6 +27,29 @@ exports.createUser = function(req, res) {
     })
 };
 
+exports.updateUser = function(req, res, next) {
+	User.findById(req.params._id, function(err, user){
+        if(!user) {
+        	res.status(400).json(error.createError('The user does not exist.', 400));
+      	} else {
+      		if(req.body.version < user.version) {
+      		    res.status(400).json(error.createError('The information has already been updated by other user, please try again.', 400));
+      		} else {
+      			Object.keys(req.body).map(function(key) {
+ 	  				user[key] = req.body[key];
+	      		});
+	      		user.version++;
+      			
+	      		user.save(function(err) {
+			    	return (err) 
+			    		? next(err)
+			    		: res.json({success: true, user: user});
+			    });
+		    }
+        }
+    })
+};
+
 exports.getAllUsers = function(req, res, next) {
 	var filters = endpointValidator.getFilterParametersFromUrl(req.query);
 	var query =  User.find(filters);
