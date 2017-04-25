@@ -21,6 +21,17 @@ module.exports = function(app, passport, endpointValidator, UserCtrl) {
 	    UserCtrl.getUser
 	);  
 
+	/**
+	 * Update an User.
+	 *
+	 * @name User Update
+	 * @route {PUT} /:_id
+	 * @routeparam {String} :_id is the unique identifier for the User.
+	 * @bodyparam {String} email
+	 * @bodyparam {Boolean} enabled
+	 * @bodyparam {String} version
+	 * @bodyparam {String} password
+	 */
 	users.put(
 	    '/:_id', 
 	    endpointValidator.validateParams('getUsers'),

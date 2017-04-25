@@ -65,6 +65,17 @@ exports.getAllUsers = function(req, res, next) {
 	});
 };
 
+	
+/**
+ * Description of my middleware.
+ * @module myMiddleware
+ * @function
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ * @return {undefined}
+ */
+
 exports.getUser = function(req, res, next) {
 	var query =  User.find({'_id': req.params._id});
 
