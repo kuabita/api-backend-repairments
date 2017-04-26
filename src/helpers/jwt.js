@@ -1,3 +1,5 @@
+'use strict';
+
 var crypto    = require('crypto'),
     jwt       = require('jwt-simple'),
     config    = require('../config/database');

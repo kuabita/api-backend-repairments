@@ -1,10 +1,12 @@
-var Company   = require('../models/companyModel'),
-	jwt       = require('jwt-simple'),
-	config    = require('../config/database'),
-	jwtHelper = require('../helpers/jwt'),
-	config    = require('../config/database');
+'use strict';
 
-exports.createCompany = function(req, res) {
+var Company        = require('../models/companyModel'),
+	jwt            = require('jwt-simple'),
+	config         = require('../config/database'),
+	jwtHelper      = require('../helpers/jwt'),
+	config         = require('../config/database');
+
+module.exports.createCompany = function(req, res) {
 	var company = new Company({ 
     	name: req.body.name,
     	phone: req.body.phone,
@@ -20,7 +22,7 @@ exports.createCompany = function(req, res) {
     });
 };
 
-exports.getAllCompanies = function(req, res, next) {
+module.exports.getAllCompanies = function(req, res, next) {
 	var token = jwtHelper.getToken(req.headers);
   	if (token) {
     	Company.find({}, function(err, companies) {

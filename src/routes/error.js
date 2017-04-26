@@ -1,3 +1,5 @@
+'use strict';
+
 var errorHelper = require('../helpers/error');
 
 module.exports = function(app) {

@@ -1,8 +1,10 @@
-var jwtHelper = require('../helpers/jwt'),
-    User      = require('../models/userModel'),
-    error     = require('../helpers/error');
+'use strict';
 
-exports.validateParams = function(endpoint) {
+var jwtHelper      = require('../helpers/jwt'),
+    User           = require('../models/userModel'),
+    error          = require('../helpers/error');
+
+module.exports.validateParams = function(endpoint) {
 	return function(req, res, next) {
 	
 		if (true) {
@@ -15,7 +17,7 @@ exports.validateParams = function(endpoint) {
 	}
 };
 
-exports.hasAccess = function(accessLevel) {
+module.exports.hasAccess = function(accessLevel) {
   return function (req, res, next) {
   	User.findOne({_id: jwtHelper.getUserIdFromToken(req.headers)}, function(err, currentUser) {
   		if (err) return next(err);
@@ -27,11 +29,11 @@ exports.hasAccess = function(accessLevel) {
   }
 };	
 
-exports.getFilterParametersFromUrl = function(urlParams) {
+module.exports.getFilterParametersFromUrl = function(urlParams) {
     var auxFilters = {};
 
     if (urlParams.filters) {
-    	arrayOfParams = JSON.parse(urlParams.filters);
+    	var arrayOfParams = JSON.parse(urlParams.filters);
 		
 		arrayOfParams.forEach(function(value){
 		    var fields = value.split('=');
@@ -41,7 +43,7 @@ exports.getFilterParametersFromUrl = function(urlParams) {
 	return auxFilters;
 };	
 
-exports.getBodyParameters = function(formParams) {
+module.exports.getBodyParameters = function(formParams) {
     var bodyParameters = {};
 
     if (formParams) {
@@ -55,6 +57,6 @@ exports.getBodyParameters = function(formParams) {
 	return bodyParameters;
 };	
 
-exports.isRequireFullResponse = function(urlParams) {
+module.exports.isRequireFullResponse = function(urlParams) {
 	return (urlParams.typeResponse === 'full');
 }

@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = function(req, res, next) {
     var ExpressBrute = require('express-brute'),
         moment       = require('moment'),

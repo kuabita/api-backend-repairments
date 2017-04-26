@@ -1,3 +1,5 @@
+'use strict';
+
 var endpointValidator = require('../middlewares/endpointValidator'),
     UserCtrl          = require('../controllers/userController');
     

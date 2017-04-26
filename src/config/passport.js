@@ -1,3 +1,5 @@
+'use strict';
+
 var JwtStrategy = require('passport-jwt').Strategy,
     User        = require('../models/userModel'),
 	config      = require('../config/database');
