@@ -71,6 +71,7 @@ module.exports.validateParams = function(endpointValidator) {
 			return (missingParameters.length > 0);
 		};
 
+
 		return new Promise((resolve, reject) => {
 			if (endpointValidatorParams.required) {
 				var missingParameters = existMissingParameters(

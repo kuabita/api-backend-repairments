@@ -1,3 +1,5 @@
+'use strict';
+
 var User        = require('../models/companyModel'),
     CompanyCtrl = require('../controllers/companyController'),
 	express     = require('express');

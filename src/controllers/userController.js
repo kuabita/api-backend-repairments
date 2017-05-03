@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 "use strict";
 
 var User                 = require('../models/userModel'),
@@ -24,6 +25,18 @@ module.exports = {};
  * @return {Object} JSON with the User information.
  */
 module.exports.createUser = function(req, res, next) {
+=======
+'use strict';
+
+var User               = require('../models/userModel'),
+	jwt                = require('jwt-simple'),
+	config             = require('../config/database'),
+	jwtHelper          = require('../helpers/jwt'),
+	error              = require('../helpers/error'),
+	endpointValidator  = require('../middlewares/endpointValidator');
+
+exports.createUser = function(req, res, next) {
+>>>>>>> 5f039f9dd79ae6fd3a88117da92f27cdd8b66ee3
 	var encryptedPass = jwtHelper.encryptPassword(req.body.email, req.body.password)
 
 	User.findOne({email:req.body.email}, function(err, user) {
@@ -135,7 +148,6 @@ module.exports.getAllUsers = function(req, res, next) {
         	: res.json({success: true, users: users});
 	});
 };
-
 	
 /**
  * Retrieve an user - req.params._id.

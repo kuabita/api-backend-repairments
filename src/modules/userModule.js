@@ -1,7 +1,9 @@
+'use strict';
+
 var User             = require('../models/userModel'),
 	paramsConstraint = require('../middlewares/paramsEndpointValidator/userParamsConstraint'),
     express          = require('express');
-    
+
 /**
  * Define the routes and the actions related to each endpoint (User).
  * @module userModule

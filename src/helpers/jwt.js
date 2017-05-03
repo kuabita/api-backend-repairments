@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 "use strict";
+=======
+'use strict';
+>>>>>>> 5f039f9dd79ae6fd3a88117da92f27cdd8b66ee3
 
 var crypto    = require('crypto'),
     jwt       = require('jwt-simple'),
