@@ -17,10 +17,10 @@ var UserSchema = new Schema({
 	    trim : true,
 	    required: true
 	},
-	companies: [{ 
-        type: mongoose.Schema.Types.ObjectId, 
-        ref: 'CompanyModel' 
-    }],
+//	companies: [{ 
+//        type: mongoose.Schema.Types.ObjectId, 
+//        ref: 'CompanyModel' 
+//    }],
     role: {type: String, required: true, enum: ['root', 'admin', 'employer']},
     enabled: {type: Boolean, default: true},
     version: {type: Number, default: 1}

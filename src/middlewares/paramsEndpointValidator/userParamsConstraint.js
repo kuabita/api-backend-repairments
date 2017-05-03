@@ -79,6 +79,70 @@ module.exports.getUser = function() {
 					errorMesage: 'User id is necessary'
 				}
 			}	
+		},
+		body: {
+			required: false,
+			fields: null,
+			errorMesage: 'Error Body'
+		}
+	}	
+};	
+
+/**
+ * Define restrictions for PUT /:_id.
+ * @function
+ * @return {Object} JSON with restrictions.
+ */
+module.exports.updateUser = function() {		
+	return {
+		params: {
+			filters: {
+				required: false,
+				fields: null
+			}	
+		},
+		query: {
+			required: false,
+			fields: null,
+			errorMesage: 'Error Query'
+		},
+		body: {
+			required: false,
+			fields: null,
+			errorMesage: 'Error Body'
+		}
+	}	
+};	
+
+/**
+ * Define restrictions for DELETE /:_id.
+ * @function
+ * @return {Object} JSON with restrictions.
+ */
+module.exports.deleteUser = function() {		
+	return {
+		params: {
+			filters: {
+				required: false,
+				fields: null
+			}	
+		},
+		query: {
+			required: true,
+			fields: {
+				_id: {
+					required: true,
+					validate: function(userId) {
+						return (/^[a-zA-Z0-9]+$/.test(userId)); 
+					},
+					errorMesage: 'User id is necessary'
+				}
+			}	
+		},
+		body: {
+			required: false,
+			fields: null,
+			errorMesage: 'Error Body'
 		}
 	}	
 };	

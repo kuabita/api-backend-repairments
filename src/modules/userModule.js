@@ -18,7 +18,7 @@ module.exports = function(app, passport, endpointValidator, UserCtrl) {
 	 *
 	 * @name Get list of Users
 	 * @authentication This route requires Authentication. If authentication fails it will return an error.
-	 * @route {GET} /
+	 * @route {GET} /users/
 	 * @queryparam {String} email
 	 * @queryparam {String} enabled
 	 * @queryparam {String} password
@@ -35,7 +35,7 @@ module.exports = function(app, passport, endpointValidator, UserCtrl) {
 	 *
 	 * @name Get an User
 	 * @authentication This route requires Authentication. If authentication fails it will return an error.
-	 * @route {GET} /:_id
+	 * @route {GET} /users/:_id
 	 * @routeparam {String} :_id is the unique identifier for the User.
 	 * @queryparam {String} email
 	 * @queryparam {String} enabled
@@ -53,7 +53,7 @@ module.exports = function(app, passport, endpointValidator, UserCtrl) {
 	 *
 	 * @name Update an User 
 	 * @authentication This route requires Authentication. If authentication fails it will return an error.
-	 * @route {PUT} /:_id
+	 * @route {PUT} /users/:_id
 	 * @routeparam {String} :_id is the unique identifier for the User.
 	 * @bodyparam {String} email
 	 * @bodyparam {String} enabled
@@ -62,9 +62,23 @@ module.exports = function(app, passport, endpointValidator, UserCtrl) {
 	 */
 	users.put(
 	    '/:_id', 
-	    endpointValidator.validateParams('getUsers'),
+	    endpointValidator.validateParams(paramsConstraint.updateUser()),
 	    UserCtrl.updateUser
 	);  
+
+	/**
+	 * Delete an User.
+	 *
+	 * @name Delete an User 
+	 * @authentication This route requires Authentication. If authentication fails it will return an error.
+	 * @route {DELETE} /users/:_id
+	 * @routeparam {String} :_id is the unique identifier for the User.
+	 */
+	users.delete(
+	    '/:_id', 
+	    endpointValidator.validateParams(paramsConstraint.deleteUser()),
+	    UserCtrl.deleteUser
+	);
 
 	app.use('/users', users);
 }

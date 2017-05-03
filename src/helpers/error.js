@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 "use strict";
 
 /**
@@ -6,9 +5,6 @@
  * @module error
  */
 module.exports = {};
-=======
-'use strict';
->>>>>>> 5f039f9dd79ae6fd3a88117da92f27cdd8b66ee3
 
 module.exports.serializeError = function (err) {
     var body = {
@@ -22,6 +18,8 @@ module.exports.serializeError = function (err) {
     
     return body;
 }
+
+"use strict";
 
 module.exports.createError = function (msg, http_code) {
     var err = new Error(msg);
