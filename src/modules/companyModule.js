@@ -6,7 +6,7 @@ module.exports = function(app, passport, endpointValidator) {
 	var companies = express.Router();
 
 	companies.use([
-		passport.authenticate('jwt', {session: false}),
+	//	passport.authenticate('jwt', {session: false}),
 		endpointValidator.hasAccess('employer')
 	]);
 

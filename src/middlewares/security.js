@@ -1,3 +1,7 @@
+/**
+ * Define restrictions in order to not allow execute multiple time an endpoint by the same user.
+ * @module security
+ */
 module.exports = function(req, res, next) {
     var ExpressBrute = require('express-brute'),
         moment       = require('moment'),

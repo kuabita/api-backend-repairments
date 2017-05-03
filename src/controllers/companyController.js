@@ -1,3 +1,5 @@
+"use strict";
+
 var Company   = require('../models/companyModel'),
 	jwt       = require('jwt-simple'),
 	config    = require('../config/database'),

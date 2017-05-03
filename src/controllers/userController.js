@@ -1,15 +1,35 @@
-var User               = require('../models/userModel'),
-	jwt                = require('jwt-simple'),
-	config             = require('../config/database'),
-	jwtHelper          = require('../helpers/jwt'),
-	error              = require('../helpers/error'),
-	endpointValidator  = require('../middlewares/endpointValidator');
+"use strict";
 
-exports.createUser = function(req, res) {
+var User                 = require('../models/userModel'),
+	jwt                  = require('jwt-simple'),
+	config               = require('../config/database'),
+	jwtHelper            = require('../helpers/jwt'),
+	error                = require('../helpers/error'),
+	paramsEndpointHelper = require('../helpers/endpointParams');
+
+/**
+ * The module handles all actions/logic behind each endpoint.
+ * @module userController
+ */
+module.exports = {};	
+
+/**
+ * Create a new User.
+ * The values of parameters come inside the req.body. 
+ * @see {/middlewares/paramsEndpointValidator/UserParamsConstraint} 
+ * @function
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ * @return {Object} JSON with the User information.
+ */
+module.exports.createUser = function(req, res, next) {
 	var encryptedPass = jwtHelper.encryptPassword(req.body.email, req.body.password)
 
-	User.findOne({email:req.body.email},function(err, user){
-        if(!user) {
+	User.findOne({email:req.body.email}, function(err, user) {
+		if (err) return next(err);
+
+        if (!user) {
             var user = new User({ 
 		    	email: req.body.email,
 		    	password: encryptedPass,
@@ -27,9 +47,50 @@ exports.createUser = function(req, res) {
     })
 };
 
-exports.updateUser = function(req, res, next) {
-	User.findById(req.params._id, function(err, user){
-        if(!user) {
+/**
+ * Authenticate the User acording the email and password value.
+ * The values of parameters come inside the req.body. 
+ * @see {/middlewares/paramsEndpointValidator/UserParamsConstraint} 
+ * @function
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ * @return {Object} JSON with the JWT.
+ */
+module.exports.authenticateUser = function(req, res, next) {
+    User.findOne({email: req.body.email}, function(err, user) {
+	    if (err) return next(err);
+
+	    if (user) {
+	  		var encryptedPass = jwtHelper.encryptPassword(req.body.email, req.body.password);
+
+	      	if (user.password === encryptedPass) {
+	            var token = jwt.encode(user, config.secret);
+	            res.json({success: true, token: 'JWT ' + token});
+	        } else {
+	        	res.status(403).json(error.createError('Authentication failed. Wrong password.', 403));
+	        }
+	  	} else {
+	    	res.status(403).json(error.createError('Authentication failed. User not found.', 403));
+	    }
+    });
+};
+
+/**
+ * Update an User - req.params._id.
+ * The values of parameters come inside the req.body.
+ * @see {/middlewares/paramsEndpointValidator/UserParamsConstraint} 
+ * @function
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ * @return {Object} JSON with the User updated.
+ */
+module.exports.updateUser = function(req, res, next) {
+	User.findById(req.params._id, function(err, user) {
+		if (err) return next(err);
+
+        if (!user) {
         	res.status(400).json(error.createError('The user does not exist.', 400));
       	} else {
       		if(req.body.version < user.version) {
@@ -50,11 +111,21 @@ exports.updateUser = function(req, res, next) {
     })
 };
 
-exports.getAllUsers = function(req, res, next) {
-	var filters = endpointValidator.getFilterParametersFromUrl(req.query);
+/**
+ * Retrieve a list of users.
+ * The values of parameters come inside the req.query.filters
+ * @see {/middlewares/paramsEndpointValidator/UserParamsConstraint} 
+ * @function
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ * @return {Object} JSON with the list of Users.
+ */
+module.exports.getAllUsers = function(req, res, next) {
+	var filters = paramsEndpointHelper.getFilterParametersFromUrl(req.query);
 	var query =  User.find(filters);
 
-	if (endpointValidator.isRequireFullResponse(req.query)) {
+	if (paramsEndpointHelper.isRequireFullResponse(req.query)) {
 		query.populate('companies');
 	}
 		
@@ -67,19 +138,18 @@ exports.getAllUsers = function(req, res, next) {
 
 	
 /**
- * Description of my middleware.
- * @module myMiddleware
+ * Retrieve an user - req.params._id.
+ * @see {/middlewares/paramsEndpointValidator/UserParamsConstraint} 
  * @function
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
- * @return {undefined}
+ * @return {Object} JSON with the User.
  */
-
-exports.getUser = function(req, res, next) {
+module.exports.getUser = function(req, res, next) {
 	var query =  User.find({'_id': req.params._id});
 
-	if (endpointValidator.isRequireFullResponse(req.query)) {
+	if (paramsEndpointHelper.isRequireFullResponse(req.query)) {
 		query.populate('companies');
 	}
 		
@@ -88,23 +158,4 @@ exports.getUser = function(req, res, next) {
         	? next(err)
         	: res.json({success: true, user: user});
 	});
-};
-
-exports.authenticateUser = function(req, res) {
-    User.findOne({email: req.body.email}, function(err, user) {
-	    if (err) return next(err);
-
-	    if (user) {
-	  		var encryptedPass = jwtHelper.encryptPassword(req.body.email, req.body.password);
-
-	      	if(user.password === encryptedPass) {
-	            var token = jwt.encode(user, config.secret);
-	            res.json({success: true, token: 'JWT ' + token});
-	        } else {
-	        	res.status(403).json(error.createError('Authentication failed. Wrong password.', 403));
-	        }
-	  	} else {
-	    	res.status(403).json(error.createError('Authentication failed. User not found.', 403));
-	    }
-    });
 };

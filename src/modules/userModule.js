@@ -1,36 +1,62 @@
-var User     = require('../models/userModel'),
-    express  = require('express');
+var User             = require('../models/userModel'),
+	paramsConstraint = require('../middlewares/paramsEndpointValidator/userParamsConstraint'),
+    express          = require('express');
     
+/**
+ * Define the routes and the actions related to each endpoint (User).
+ * @module userModule
+ */    
 module.exports = function(app, passport, endpointValidator, UserCtrl) {
 	var users = express.Router();
 	
-	users.use([
-		passport.authenticate('jwt', {session: false}),
-		endpointValidator.hasAccess('employer')
-	]);
+	users.use(endpointValidator.hasAccess('employer'));
 	
+	/**
+	 * Retrieve a list of Users.
+	 *
+	 * @name Get list of Users
+	 * @authentication This route requires Authentication. If authentication fails it will return an error.
+	 * @route {GET} /
+	 * @queryparam {String} email
+	 * @queryparam {String} enabled
+	 * @queryparam {String} password
+	 * @queryparam {String} role
+	 */
 	users.get(
 	    '/', 
-	    endpointValidator.validateParams('getUsers'),
+	    endpointValidator.validateParams(paramsConstraint.getAllUsers()),
 	    UserCtrl.getAllUsers
 	);
 
+	/**
+	 * Retrieve an User.
+	 *
+	 * @name Get an User
+	 * @authentication This route requires Authentication. If authentication fails it will return an error.
+	 * @route {GET} /:_id
+	 * @routeparam {String} :_id is the unique identifier for the User.
+	 * @queryparam {String} email
+	 * @queryparam {String} enabled
+	 * @queryparam {String} password
+	 * @queryparam {String} role
+	 */
 	users.get(
 	    '/:_id', 
-	    endpointValidator.validateParams('getUsers'),
+	    endpointValidator.validateParams(paramsConstraint.getUser()),
 	    UserCtrl.getUser
 	);  
 
 	/**
 	 * Update an User.
 	 *
-	 * @name User Update
+	 * @name Update an User 
+	 * @authentication This route requires Authentication. If authentication fails it will return an error.
 	 * @route {PUT} /:_id
 	 * @routeparam {String} :_id is the unique identifier for the User.
 	 * @bodyparam {String} email
-	 * @bodyparam {Boolean} enabled
-	 * @bodyparam {String} version
+	 * @bodyparam {String} enabled
 	 * @bodyparam {String} password
+	 * @bodyparam {String} role
 	 */
 	users.put(
 	    '/:_id', 

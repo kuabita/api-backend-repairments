@@ -23,13 +23,19 @@ var CompanySchema = new Schema({
     },
     admin: {
         type: ObjectId, 
-        ref: 'User',
+        ref: 'UserModel',
         required: false,
         default: null
     },
     repairShops: [{ 
         type: ObjectId, 
-        ref: 'RepairShop',
+        ref: 'RepairShopModel',
+        required: false,
+        default: null 
+    }],
+    employers: [{ 
+        type: ObjectId, 
+        ref: 'UserModel',
         required: false,
         default: null 
     }],
