@@ -1,5 +1,7 @@
 "use strict";
 
+var commonConstraint = require('./commonConstraint');
+
 /**
  * Define the parameters restrictions for each endpoint. 
  * @module userParamsConstraint
@@ -19,27 +21,26 @@ module.exports.getAllUsers = function() {
 				fields: {
 					email: {
 						required: false,
-						validate: function(email) {
-							return (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email));
-						},
+						validate: commonConstraint.validateEmail,
 						errorMesage: 'Error trying to validate the field => Email.'
 					},
 					role: {
 						required: false,
-						validate: function(rol) {
-							return (['root', 'admin', 'employer'].indexOf(rol) > -1);
-						},
+						validate: commonConstraint.validateRol,
 						errorMesage: 'Error trying to validate the field =>  Rol.'
 					},
 					enabled: {
 						required: false,
-						validate: function(value) {
-							return (['true', 'false'].indexOf(value) > -1);
-						},
+						validate: commonConstraint.validateEnabled,
 						errorMesage: 'Error trying to validate the field => Enabled.'
 					}
 				},
 				errorMesage: 'Error filters'	
+			},
+			populate: {
+				required: false,
+				validate: null,
+				errorMesage: 'Error filters'
 			}	
 		},
 		query: {
@@ -66,16 +67,19 @@ module.exports.getUser = function() {
 			filters: {
 				required: false,
 				fields: null
-			}	
+			},
+			populate: {
+				required: false,
+				validate: null,
+				errorMesage: 'Error filters'
+			}
 		},
 		query: {
 			required: true,
 			fields: {
 				_id: {
 					required: true,
-					validate: function(userId) {
-						return (/^[a-zA-Z0-9]+$/.test(userId)); 
-					},
+					validate: commonConstraint.validateId,
 					errorMesage: 'User id is necessary'
 				}
 			}	
@@ -99,16 +103,42 @@ module.exports.updateUser = function() {
 			filters: {
 				required: false,
 				fields: null
-			}	
+			},
+			populate: {
+				required: false,
+				validate: null,
+				errorMesage: 'Error filters'
+			}
 		},
 		query: {
-			required: false,
-			fields: null,
-			errorMesage: 'Error Query'
+			required: true,
+			fields: {
+				_id: {
+					required: true,
+					validate: commonConstraint.validateId,
+					errorMesage: 'User id is necessary'
+				}
+			}	
 		},
 		body: {
-			required: false,
-			fields: null,
+			required: true,
+			fields: {
+				enabled: {
+					required: false,
+					validate: commonConstraint.validateEnabled,
+					errorMesage: 'Error trying to validate the field => Enabled.'
+				},
+				role: {
+					required: false,
+					validate: commonConstraint.validateRol,
+					errorMesage: 'Error trying to validate the field =>  Rol.'
+				},
+				version: {
+					required: true,
+					validate: commonConstraint.validateVersion,
+					errorMesage: 'Error trying to validate the field =>  Rol.'
+				}
+			},
 			errorMesage: 'Error Body'
 		}
 	}	
@@ -125,16 +155,19 @@ module.exports.deleteUser = function() {
 			filters: {
 				required: false,
 				fields: null
-			}	
+			},
+			populate: {
+				required: false,
+				validate: null,
+				errorMesage: 'Error filters'
+			}
 		},
 		query: {
 			required: true,
 			fields: {
 				_id: {
 					required: true,
-					validate: function(userId) {
-						return (/^[a-zA-Z0-9]+$/.test(userId)); 
-					},
+					validate: commonConstraint.validateId,
 					errorMesage: 'User id is necessary'
 				}
 			}	

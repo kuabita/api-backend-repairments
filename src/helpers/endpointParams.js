@@ -7,6 +7,22 @@
 module.exports = {};	
 
 /**
+ * Parse the value of 'populate' and return a JSON. 
+ * @function
+ * @param {String} urlParams - The parameter contains a set of populate values.
+ * @return {Object} JSON with key and value of each parameter.
+ */
+module.exports.getPopulateParametersFromUrl = function(urlParams) {
+    var populate = [];
+    if (urlParams.populate) {
+    	JSON.parse(urlParams.populate).forEach(function(value) {
+		    populate.push(value);
+		});
+	}
+	return populate;
+};
+
+/**
  * Parse the value of 'filters' and return a JSON. 
  * @function
  * @param {String} urlParams - The parameter contains a set of filters values (key => value).

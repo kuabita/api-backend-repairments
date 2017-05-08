@@ -7,7 +7,8 @@ var RepairShopSchema = new Schema({
     name: {
 	    type: String,
 	    lowercase: true, 
-	    trim : true 
+	    trim : true,
+        required: true 
 	},
 	phone: {
 	    type: String,
@@ -21,13 +22,11 @@ var RepairShopSchema = new Schema({
     },
     company: { 
         type: mongoose.Schema.Types.ObjectId, 
-        ref: 'Company' 
+        ref: 'Company',
+        required: true 
     },
-    employers: [{ 
-        type: mongoose.Schema.Types.ObjectId, 
-        ref: 'User' 
-    }],
-    enabled: {type: Boolean, default: true}
+    enabled: {type: Boolean, default: true},
+    version: {type: Number, default: 1}
 });
 
 module.exports = mongoose.model('RepairShop', RepairShopSchema);

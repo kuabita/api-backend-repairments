@@ -87,28 +87,18 @@ module.exports.authenticateUser = function(req, res, next) {
  * @return {Object} JSON with the User updated.
  */
 module.exports.updateUser = function(req, res, next) {
-	User.findById(req.params._id, function(err, user) {
-		if (err) return next(err);
-
-        if (!user) {
-        	res.status(400).json(error.createError('The user does not exist.', 400));
-      	} else {
-      		if(req.body.version < user.version) {
-      		    res.status(400).json(error.createError('The information has already been updated by other user, please try again.', 400));
-      		} else {
-      			Object.keys(req.body).map(function(key) {
- 	  				user[key] = req.body[key];
-	      		});
-	      		user.version++;
-      			
-	      		user.save(function(err) {
-			    	return (err) 
-			    		? next(err)
-			    		: res.json({success: true, user: user});
-			    });
-		    }
-        }
-    })
+    var version = req.body.version;
+    delete req.body.version;
+    User.findOneAndUpdate(
+		{'_id': req.params._id, 'version': version},
+		{'$set': req.body, '$inc': {'version': 1}},
+		{new: true},
+		function(err, user) {
+			return (err) 
+				? next(err)
+				: res.json({success: true, user: user});
+			}
+	)
 };
 
 /**
@@ -123,14 +113,9 @@ module.exports.updateUser = function(req, res, next) {
  */
 module.exports.getAllUsers = function(req, res, next) {
 	var filters = paramsEndpointHelper.getFilterParametersFromUrl(req.query);
-	var query =  User.find(filters);
 
-	if (paramsEndpointHelper.isRequireFullResponse(req.query)) {
-		query.populate('companies');
-	}
-		
-	query.exec(function(err, users) {
-        return (err)
+	User.find(filters, function(err, users) { 
+		return (err)
         	? next(err)
         	: res.json({success: true, users: users});
 	});
@@ -146,16 +131,10 @@ module.exports.getAllUsers = function(req, res, next) {
  * @return {Object} JSON with the User.
  */
 module.exports.getUser = function(req, res, next) {
-	var query =  User.find({'_id': req.params._id});
-
-	if (paramsEndpointHelper.isRequireFullResponse(req.query)) {
-		query.populate('companies');
-	}
-		
-	query.exec(function(err, user) {
-        return (err)
+	User.findOne({'_id': req.params._id}, function(err, user) { 
+		return (err)
         	? next(err)
-        	: res.json({success: true, user: user});
+        	: res.json({success: true, user: user}); 
 	});
 };
 

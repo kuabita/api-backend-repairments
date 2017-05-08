@@ -44,6 +44,26 @@ module.exports.validateParams = function(endpointValidator) {
 	};
 
 	/**
+	 * Private Function - Validate the value Populate with a specific function validation.
+	 * @function
+	 * @param {Object} params - Parameters defined in the req.
+	 * @param {Object} endpointValidatorFields - Restrictions defined for Populate filter param.
+	 * @return {Promise}
+	 */
+	var validateValuesOfPopulateParams = function(populateParams, endpointValidatorFields) {
+		return new Promise((resolve, reject) => {
+			if (populateParams.populate) {
+				var values = endpointHelper.getPopulateParametersFromUrl(populateParams);
+				if (!endpointValidatorFields.validate(values)) {
+					reject(endpointValidatorFields[key].errorMesage);	
+				}	
+			}
+			resolve('Successfully executed.');
+		});
+	};
+
+
+	/**
 	 * Private Function - Validate that the required parameters exist in the req object.
 	 * @function
 	 * @param {Object} params - Parameters defined in the req.
@@ -86,7 +106,7 @@ module.exports.validateParams = function(endpointValidator) {
 	};
 
 	return function(req, res, next) {
-		var p1, p2, p3, p4, p5, p6;
+		var p1, p2, p3, p4, p5, p6, p7;
 
 		p1 = checkRequirementsOfTheEndpoint(
 			endpointValidator.params.filters, 
@@ -102,14 +122,16 @@ module.exports.validateParams = function(endpointValidator) {
 			endpointValidator.body, 
 			req.body
 		);
-
-		p4 = validateValuesOfParams(endpointHelper.getFilterParametersFromUrl(req.query), endpointValidator.params.filters.fields);
 	
-		p5 = validateValuesOfParams(req.params, endpointValidator.query.fields);
+		p4 = validateValuesOfParams(req.params, endpointValidator.query.fields);
 	
-		p6 = validateValuesOfParams(req.body, endpointValidator.body.fields);
+		p5 = validateValuesOfParams(req.body, endpointValidator.body.fields);
 		
-		Promise.all([p1, p2, p3, p4, p5, p6]).then(values => { 
+		p6 = validateValuesOfParams(endpointHelper.getFilterParametersFromUrl(req.query), endpointValidator.params.filters.fields);
+
+		p7 = validateValuesOfPopulateParams(req.query, endpointValidator.params.populate);
+
+		Promise.all([p1, p2, p3, p4, p5, p6, p7]).then(values => { 
 		    return next();
 		}).catch(reason => { 
 		    return res.status(403).json(error.createError(reason, 403));

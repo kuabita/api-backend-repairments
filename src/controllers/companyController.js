@@ -1,10 +1,11 @@
 "use strict";
 
-var Company   = require('../models/companyModel'),
-	jwt       = require('jwt-simple'),
-	config    = require('../config/database'),
-	jwtHelper = require('../helpers/jwt'),
-	config    = require('../config/database');
+var Company              = require('../models/companyModel'),
+	jwt                  = require('jwt-simple'),
+	config               = require('../config/database'),
+	jwtHelper            = require('../helpers/jwt'),
+	config               = require('../config/database'),
+	paramsEndpointHelper = require('../helpers/endpointParams');
 
 /**
  * The module handles all actions/logic behind each endpoint of /companies.
@@ -27,7 +28,6 @@ module.exports.createCompany = function(req, res, next) {
     	name: req.body.name,
     	phone: req.body.phone,
     	address: req.body.address,
-    	enabled: true,
     	admin: jwtHelper.getUserIdFromToken(req.headers)
   	});
 
@@ -49,15 +49,15 @@ module.exports.createCompany = function(req, res, next) {
  * @return {Object} JSON with the list of Users.
  */
 module.exports.getAllCompanies = function(req, res, next) {
-	var filters = paramsEndpointHelper.getFilterParametersFromUrl(req.query);
+	var filters  = paramsEndpointHelper.getFilterParametersFromUrl(req.query);
+	var populate = paramsEndpointHelper.getPopulateParametersFromUrl(req.query);
+
 	var query =  Company.find(filters);
 
-	if (paramsEndpointHelper.isRequireFullResponse(req.query)) {
-		query.populate('admin');
-		query.populate('repairShops');
-		query.populate('employers');
-	}
-
+	populate.forEach(function(value) {
+	    query.populate(value);
+	});
+	
 	query.exec(function(err, companies) {
         return (err)
         	? next(err)
@@ -76,28 +76,18 @@ module.exports.getAllCompanies = function(req, res, next) {
  * @return {Object} JSON with the Company updated.
  */
 module.exports.updateCompany = function(req, res, next) {
-	Company.findById(req.params._id, function(err, company) {
-		if (err) return next(err);
-
-        if (!company) {
-        	res.status(400).json(error.createError('The company does not exist.', 400));
-      	} else {
-      		if(req.body.version < user.version) {
-      		    res.status(400).json(error.createError('The information has already been updated by other user, please try again.', 400));
-      		} else {
-      			Object.keys(req.body).map(function(key) {
- 	  				company[key] = req.body[key];
-	      		});
-	      		company.version++;
-      			
-	      		company.save(function(err) {
-			    	return (err) 
-			    		? next(err)
-			    		: res.json({success: true, user: user});
-			    });
-		    }
-        }
-    })
+	var version = req.body.version;
+    delete req.body.version;
+	Company.findOneAndUpdate(
+		{'_id': req.params._id, 'version': version},
+		{'$set': req.body, '$inc': {'version': 1}},
+		{new: true},
+		function(err, company) {
+			return (err) 
+				? next(err)
+				: res.json({success: true, company: company});
+			}
+	)
 };
 
 /**

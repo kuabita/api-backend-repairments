@@ -24,24 +24,12 @@ var CompanySchema = new Schema({
         required: true
     },
     admin: {
-        type: ObjectId, 
-        ref: 'UserModel',
-        required: false,
-        default: null
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
     },
-    repairShops: [{ 
-        type: ObjectId, 
-        ref: 'RepairShopModel',
-        required: false,
-        default: null 
-    }],
-    employers: [{ 
-        type: ObjectId, 
-        ref: 'UserModel',
-        required: false,
-        default: null 
-    }],
-    enabled: {type: Boolean, default: true}
+    enabled: {type: Boolean, default: true},
+    version: {type: Number, default: 1}
 });
 
 module.exports = mongoose.model('Company', CompanySchema);

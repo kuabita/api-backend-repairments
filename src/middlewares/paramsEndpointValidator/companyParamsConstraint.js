@@ -1,3 +1,7 @@
+"use strict";
+
+var commonConstraint = require('./commonConstraint');
+
 /**
  * Define restrictions for DELETE /:_id.
  * @function
@@ -9,7 +13,12 @@ module.exports.deleteCompany = function() {
 			filters: {
 				required: false,
 				fields: null
-			}	
+			},
+			populate: {
+				required: false,
+				validate: null,
+				errorMesage: 'Error filters'
+			}
 		},
 		query: {
 			required: false,
@@ -35,7 +44,15 @@ module.exports.getAllCompanies = function() {
 			filters: {
 				required: false,
 				fields: null
-			}	
+			},
+			populate: {
+				required: false,
+				validate: function(values) {
+					var allowValues = ['admin', 'company'];
+					return commonConstraint.validateFieldsPopulate(values, allowValues);
+				},
+				errorMesage: 'Error filters'
+			}
 		},
 		query: {
 			required: false,
@@ -61,7 +78,12 @@ module.exports.createCompany = function() {
 			filters: {
 				required: false,
 				fields: null
-			}	
+			},
+			populate: {
+				required: false,
+				validate: null,
+				errorMesage: 'Error filters'
+			}
 		},
 		query: {
 			required: false,
