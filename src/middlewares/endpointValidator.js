@@ -92,7 +92,9 @@ module.exports.validateParams = function(endpointValidator) {
 		};
 
 		return new Promise((resolve, reject) => {
-			if (endpointValidatorParams.required) {
+			if (!endpointValidatorParams.allowed && Object.getOwnPropertyNames(reqParams).length > 0) {
+				reject("Parameters values are not allowed");
+			} else if (endpointValidatorParams.required) {
 				var missingParameters = existMissingParameters(
 					endpointValidatorParams.fields, 
 					Object.keys(reqParams)

@@ -16,7 +16,7 @@ module.exports = {};
 /**
  * Create a new Company.
  * The values of parameters come inside the req.body. 
- * @see {/middlewares/paramsEndpointValidator/CompanyParamsConstraint} 
+ * @see {/middlewares/paramsEndpointValidator/companyParamsConstraint} 
  * @function
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
@@ -24,24 +24,22 @@ module.exports = {};
  * @return {Object} JSON with the Company information.
  */
 module.exports.createCompany = function(req, res, next) {
-	var company = new Company({ 
+	Company.create({
     	name: req.body.name,
     	phone: req.body.phone,
     	address: req.body.address,
     	admin: jwtHelper.getUserIdFromToken(req.headers)
-  	});
-
-  	company.save(function(err) {
+    }, function (err, company) {
     	return (err) 
-    		? next(err)
-    		: res.json({success: true, company: company});
+			? next(err)
+			: res.json({success: true, company: company});
 	});
 };
 
 /**
  * Retrieve a list of companies.
  * The values of parameters come inside the req.query.filters
- * @see {/middlewares/paramsEndpointValidator/CompanyParamsConstraint} 
+ * @see {/middlewares/paramsEndpointValidator/companyParamsConstraint} 
  * @function
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
@@ -68,7 +66,7 @@ module.exports.getAllCompanies = function(req, res, next) {
 /**
  * Update a Company - req.params._id.
  * The values of parameters come inside the req.body.
- * @see {/middlewares/paramsEndpointValidator/CompanyParamsConstraint} 
+ * @see {/middlewares/paramsEndpointValidator/companyParamsConstraint} 
  * @function
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
@@ -92,7 +90,7 @@ module.exports.updateCompany = function(req, res, next) {
 
 /**
  * Delete a Company - req.params._id.
- * @see {/middlewares/paramsEndpointValidator/CompanyParamsConstraint} 
+ * @see {/middlewares/paramsEndpointValidator/companyParamsConstraint} 
  * @function
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object

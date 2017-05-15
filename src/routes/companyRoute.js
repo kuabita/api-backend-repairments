@@ -16,11 +16,8 @@ module.exports = function(app, passport, endpointValidator) {
 	 * @name Get list of Companies
 	 * @authentication This route requires Authentication. If authentication fails it will return an error.
 	 * @route {GET} /companies/
-	 * @queryparam {String} phone
-	 * @queryparam {String} name
-	 * @queryparam {String} address
-	 * @queryparam {String} admin
-	 * @queryparam {String} enabled
+	 * @queryparam {String} [filters]  (phone || name || address || admin || enabled)
+	 * @queryparam {String} [populate] (admin)
 	 */
 	companies.get(
 		'/', 
@@ -29,18 +26,57 @@ module.exports = function(app, passport, endpointValidator) {
 	);
 
 	/**
+	 * @name Get a particular Company 
+	 * @authentication This route requires Authentication. If authentication fails it will return an error.
+	 * @route {GET} /companies/:_id
+	 * @routeparam {String} :_id is the unique identifier for the Company.
+	 * @queryparam {String} [populate] (admin)
+	 */
+	companies.get(
+		'/:_id', 
+		endpointValidator.validateParams(paramsConstraint.getCompany()),
+		CompanyCtrl.getCompany
+	);
+
+	/**
 	 * @name Create a Company 
+	 * @authentication This route requires Authentication. If authentication fails it will return an error.
 	 * @route {POST} /companies/
-	 * @bodyparam {String} phone
-	 * @bodyparam {String} name
+	 * @bodyparam {String} phone 
+	 * @bodyparam {String} name 
 	 * @bodyparam {String} address
 	 */
 	companies.post(
 		'/', 
-		//endpointValidator.validateParams(paramsConstraint.createCompany()),
-		//endpointValidator.hasAccess('admin'),
+		[
+			endpointValidator.validateParams(paramsConstraint.createCompany()),
+			endpointValidator.hasAccess('admin')
+		],	
 		CompanyCtrl.createCompany
 	);
+
+	/**
+	 * Update a Company.
+	 *
+	 * @name Update an Company 
+	 * @authentication This route requires Authentication. If authentication fails it will return an error.
+	 * @route {PUT} /companies/:_id
+	 * @routeparam {String} :_id is the unique identifier for the Company.
+	 * @bodyparam {String} phone 
+	 * @bodyparam {String} name 
+	 * @bodyparam {String} address
+ 	 * @bodyparam {String} admin
+	 * @bodyparam {String} enabled
+	 * @bodyparam {String} version
+	 */
+	companies.put(
+	    '/:_id',
+	    [
+			endpointValidator.validateParams(paramsConstraint.updateCompany()),
+			endpointValidator.hasAccess('admin')
+		],	 
+	    UserCtrl.updateCompany
+	);  
 
 	/**
 	 * Delete an Company.
@@ -52,7 +88,10 @@ module.exports = function(app, passport, endpointValidator) {
 	 */
 	companies.delete(
 	    '/:_id', 
-	    endpointValidator.validateParams(paramsConstraint.deleteCompany()),
+	    [
+	    	endpointValidator.validateParams(paramsConstraint.deleteCompany()),
+	    	endpointValidator.hasAccess('admin')
+	    ],
 	    CompanyCtrl.deleteCompany
 	);
 

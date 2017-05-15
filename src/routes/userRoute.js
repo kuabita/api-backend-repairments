@@ -1,14 +1,13 @@
 'use strict';
 
-var User             = require('../models/userModel'),
-	paramsConstraint = require('../middlewares/paramsEndpointValidator/userParamsConstraint'),
-    express          = require('express');
+var User    = require('../models/userModel'),
+	express = require('express');
 
 /**
  * Define the routes and the actions related to each endpoint (User).
  * @module userModule
  */    
-module.exports = function(app, passport, endpointValidator, UserCtrl) {
+module.exports = function(app, passport, endpointValidator, UserCtrl, paramsConstraint) {
 	var users = express.Router();
 	
 	users.use(endpointValidator.hasAccess('employer'));
@@ -19,10 +18,7 @@ module.exports = function(app, passport, endpointValidator, UserCtrl) {
 	 * @name Get list of Users
 	 * @authentication This route requires Authentication. If authentication fails it will return an error.
 	 * @route {GET} /users/
-	 * @queryparam {String} email
-	 * @queryparam {String} enabled
-	 * @queryparam {String} password
-	 * @queryparam {String} role
+	 * @queryparam {String} filters => [email enabled password role]
 	 */
 	users.get(
 	    '/', 
@@ -37,10 +33,6 @@ module.exports = function(app, passport, endpointValidator, UserCtrl) {
 	 * @authentication This route requires Authentication. If authentication fails it will return an error.
 	 * @route {GET} /users/:_id
 	 * @routeparam {String} :_id is the unique identifier for the User.
-	 * @queryparam {String} email
-	 * @queryparam {String} enabled
-	 * @queryparam {String} password
-	 * @queryparam {String} role
 	 */
 	users.get(
 	    '/:_id', 
@@ -55,10 +47,10 @@ module.exports = function(app, passport, endpointValidator, UserCtrl) {
 	 * @authentication This route requires Authentication. If authentication fails it will return an error.
 	 * @route {PUT} /users/:_id
 	 * @routeparam {String} :_id is the unique identifier for the User.
-	 * @bodyparam {String} email
-	 * @bodyparam {String} enabled
-	 * @bodyparam {String} password
-	 * @bodyparam {String} role
+	 * @bodyparam {String} email 
+	 * @bodyparam {String} enabled 
+	 * @bodyparam {String} password 
+	 * @bodyparam {String} role 
 	 * @bodyparam {String} version
 	 */
 	users.put(
@@ -77,7 +69,10 @@ module.exports = function(app, passport, endpointValidator, UserCtrl) {
 	 */
 	users.delete(
 	    '/:_id', 
-	    endpointValidator.validateParams(paramsConstraint.deleteUser()),
+	    [
+	    	endpointValidator.validateParams(paramsConstraint.deleteUser()),
+	   		endpointValidator.hasAccess('admin')
+	    ],
 	    UserCtrl.deleteUser
 	);
 

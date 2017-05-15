@@ -1,7 +1,8 @@
 'use strict';
 
-var endpointValidator = require('../middlewares/endpointValidator'),
-    UserCtrl          = require('../controllers/userController');
+var endpointValidator     = require('../middlewares/endpointValidator'),
+    UserCtrl              = require('../controllers/userController'),
+    userParamsConstraint  = require('../middlewares/paramsEndpointValidator/userParamsConstraint');
 
 /**
  * Define the possible routes of the Service and execute the corresponding actions.
@@ -29,7 +30,12 @@ module.exports = function(app, passport, globalBruteforce) {
 	 * @bodyparam {String} email
 	 * @bodyparam {String} password
 	 */
-	app.post('/public/authenticateUser', globalBruteforce.prevent, UserCtrl.authenticateUser);
+	app.post('/public/authenticateUser', [
+		globalBruteforce.prevent,
+		endpointValidator.validateParams(userParamsConstraint.authenticateUser()) 
+		],
+		UserCtrl.authenticateUser
+	);
 	/**
 	 * @name Register an User 
 	 * @route {POST} /public/registerUser
@@ -37,13 +43,19 @@ module.exports = function(app, passport, globalBruteforce) {
 	 * @bodyparam {String} password
 	 * @bodyparam {String} role
 	 */
-	app.post('/public/registerUser', globalBruteforce.prevent, UserCtrl.createUser);
+	app.post('/public/registerUser', [
+		globalBruteforce.prevent, 
+		endpointValidator.validateParams(userParamsConstraint.updateUser())
+		],
+		UserCtrl.createUser
+	);
 
 	// =======================
 	// Private Endpoints --- get the routes configuration for each Endpoint/Module. 
 	// =======================
-	require('./userRoute')(app, passport, endpointValidator, UserCtrl);
+	require('./userRoute')(app, passport, endpointValidator, UserCtrl, userParamsConstraint);
 	require('./companyRoute')(app, passport, endpointValidator);
+	require('./repairShopRoute')(app, passport, endpointValidator);
 
 	require('./error')(app, passport, endpointValidator);
 }    

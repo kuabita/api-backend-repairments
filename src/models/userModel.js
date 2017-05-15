@@ -17,17 +17,18 @@ var UserSchema = new Schema({
 	    trim : true,
 	    required: true
 	},
-    role: {type: String, required: true, enum: ['root', 'admin', 'employer']},
+    role: {type: String, required: true, enum: ['root', 'admin', 'employer', 'client']},
     enabled: {type: Boolean, default: true},
     version: {type: Number, default: 1}
 });
 
 UserSchema.plugin(require('mongoose-role'), {
-  	roles: ['root', 'admin', 'employer'],
+  	roles: ['root', 'admin', 'employer', 'client'],
 	accessLevels: {
 		'root': ['root'],
 		'admin': ['admin', 'root'],
-		'employer': ['employer', 'admin', 'root']		    
+		'employer': ['employer', 'admin', 'root'],
+		'client': ['client', 'employer', 'admin', 'root'] 		    
 	}
 });
 

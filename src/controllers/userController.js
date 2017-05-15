@@ -28,19 +28,16 @@ module.exports.createUser = function(req, res, next) {
 
 	User.findOne({email:req.body.email}, function(err, user) {
 		if (err) return next(err);
-
-        if (!user) {
-            var user = new User({ 
+		if (!user) {
+		    User.create({
 		    	email: req.body.email,
 		    	password: encryptedPass,
-		    	role: req.body.role,
-	  		});
-	        
-		    user.save(function(err) {
+		    	role: req.body.role
+		    }, function (err, user) {
 		    	return (err) 
-		    		? next(err)
-		    		: res.json({success: true, user: user});
-		    });
+					? next(err)
+					: res.json({success: true, user: user});
+			});
       	} else {
       		res.status(400).json(error.createError('The user already exist', 400));
         }
@@ -148,9 +145,16 @@ module.exports.getUser = function(req, res, next) {
  * @return {Object} JSON with the User updated.
  */
 module.exports.deleteUser = function(req, res, next) {
-	User.findByIdAndRemove({'_id': req.params._id}, function(err) {
-	    return (err) 
-    		? next(err)
-    		: res.json({success: true, Message: 'User deleted successfully'});
-	});
+	var version = req.body.version;
+    delete req.body.version;
+    User.findOneAndUpdate(
+		{'_id': req.params._id, 'version': version},
+		{'$set': {enabled: false}, '$inc': {'version': 1}},
+		{new: true},
+		function(err, user) {
+			return (err) 
+				? next(err)
+				: res.json({success: true, user: user});
+		}
+	);
 };

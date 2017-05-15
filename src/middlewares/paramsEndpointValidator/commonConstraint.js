@@ -20,6 +20,14 @@ module.exports.validateId = function(id) {
 	return (/^[a-zA-Z0-9]+$/.test(id));
 }
 
+module.exports.validatePhone = function(phone) {
+	return (/^[0-9]+$/.test(phone));
+}
+
+module.exports.validateName = function(name) {
+	return (/^[a-zA-Z]+$/.test(name));
+}
+
 module.exports.validateFieldsPopulate = function(reqValues, allowValues) {
 	var isSubset = reqValues.every(function(val) { 
 		return (allowValues.indexOf(val) >= 0); 

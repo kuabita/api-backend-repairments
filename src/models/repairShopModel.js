@@ -13,18 +13,23 @@ var RepairShopSchema = new Schema({
 	phone: {
 	    type: String,
 	    lowercase: true, 
-	    trim : true
+	    trim : false
 	},
     address: {
         type: String,
         lowercase: true, 
-        trim : true
+        trim : false
     },
     company: { 
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'Company',
         required: true 
     },
+    employers: [{
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'User',
+        required: false 
+    }],
     enabled: {type: Boolean, default: true},
     version: {type: Number, default: 1}
 });

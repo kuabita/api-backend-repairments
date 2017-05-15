@@ -9,7 +9,7 @@ var CompanySchema = new Schema({
 	    type: String,
 	    lowercase: true, 
 	    trim : true,
-	    required: true
+	    required: false
 	},
     name: {
         type: String,
@@ -21,7 +21,7 @@ var CompanySchema = new Schema({
         type: String,
         lowercase: true, 
         trim : true,
-        required: true
+        required: false
     },
     admin: {
         type: mongoose.Schema.Types.ObjectId,
