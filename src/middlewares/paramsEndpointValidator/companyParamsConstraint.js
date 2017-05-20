@@ -24,6 +24,12 @@ module.exports.createCompany = function() {
 			}
 		},
 		query: {
+			allowed: false,
+			required: false,
+			fields: null,
+			errorMesage: 'Error in Query parameters'
+		},
+		body: {
 			allowed: true,
 			required: true,
 			fields: {
@@ -44,16 +50,10 @@ module.exports.createCompany = function() {
 				},
 				address: {
 					required: false,
-					validate: funtion() {return true},
+					validate: true,
 					errorMesage: 'Error trying to validate the field => Address.'
 				}
 			},
-			errorMesage: 'Error in Query parameters'
-		},
-		body: {
-			allowed: true,
-			required: true,
-			fields: null,
 			errorMesage: 'Error in Body parameters'
 		}
 	}	
@@ -77,18 +77,18 @@ module.exports.getAllCompanies = function() {
 						errorMesage: 'Error trying to validate the field =>  Phone.'
 					},
 					name: {
-						required: true,
+						required: false,
 						validate: commonConstraint.validateName,
 						errorMesage: 'Error trying to validate the field => Name.'
 					},
 					admin: {
-						required: true,
+						required: false,
 						validate: commonConstraint.validateId,
 						errorMesage: 'Error trying to validate the field => Admin.'
 					},
 					address: {
 						required: false,
-						validate: funtion() {return true},
+						validate: true,
 						errorMesage: 'Error trying to validate the field => Address.'
 					},
 					enabled: {
@@ -138,11 +138,9 @@ module.exports.getCompany = function() {
 				errorMesage: 'Error in filters parameters'	
 			},
 			populate: {
+				allowed: false,
 				required: false,
-				validate: function(values) {
-					var allowValues = ['admin'];
-					return commonConstraint.validateFieldsPopulate(values, allowValues);
-				},
+				validate: null,
 				errorMesage: 'Error in Populate parameters'
 			}
 		},
@@ -153,7 +151,7 @@ module.exports.getCompany = function() {
 				_id: {
 					required: true,
 					validate: commonConstraint.validateId,
-					errorMesage: 'Company id is necessary'
+					errorMesage: 'Error validating the Company id'
 				}
 			},
 			errorMesage: 'Error in Query parameters'	
@@ -195,14 +193,14 @@ module.exports.updateCompany = function() {
 				_id: {
 					required: true,
 					validate: commonConstraint.validateId,
-					errorMesage: 'Company id is necessary'
+					errorMesage: 'Error validating the Company id'
 				}
 			},
 			errorMesage: 'Error in Query parameters'	
 		},
 		body: {
 			allowed: true,
-			required: false,
+			required: true,
 			fields: {
 				phone: {
 					required: false,
@@ -210,18 +208,18 @@ module.exports.updateCompany = function() {
 					errorMesage: 'Error trying to validate the field =>  Phone.'
 				},
 				name: {
-					required: true,
+					required: false,
 					validate: commonConstraint.validateName,
 					errorMesage: 'Error trying to validate the field => Name.'
 				},
 				admin: {
-					required: true,
+					required: false,
 					validate: commonConstraint.validateId,
 					errorMesage: 'Error trying to validate the field => Admin.'
 				},
 				address: {
 					required: false,
-					validate: funtion() {return true},
+					validate: true,
 					errorMesage: 'Error trying to validate the field => Address.'
 				},
 				enabled: {
@@ -268,7 +266,7 @@ module.exports.deleteCompany = function() {
 				_id: {
 					required: true,
 					validate: commonConstraint.validateId,
-					errorMesage: 'Company id is necessary'
+					errorMesage: 'Error validating the Company id'
 				}
 			},
 			errorMesage: 'Error in Query parameters'	

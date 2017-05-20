@@ -30,7 +30,6 @@ module.exports = function(app, passport, endpointValidator) {
 	 * @authentication This route requires Authentication. If authentication fails it will return an error.
 	 * @route {GET} /companies/:_id
 	 * @routeparam {String} :_id is the unique identifier for the Company.
-	 * @queryparam {String} [populate] (admin)
 	 */
 	companies.get(
 		'/:_id', 
@@ -75,7 +74,7 @@ module.exports = function(app, passport, endpointValidator) {
 			endpointValidator.validateParams(paramsConstraint.updateCompany()),
 			endpointValidator.hasAccess('admin')
 		],	 
-	    UserCtrl.updateCompany
+	    CompanyCtrl.updateCompany
 	);  
 
 	/**

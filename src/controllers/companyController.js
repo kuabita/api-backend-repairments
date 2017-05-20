@@ -14,6 +14,26 @@ var Company              = require('../models/companyModel'),
 module.exports = {};	
 
 /**
+ * Retrieve a Company - req.params._id.
+ * @see {/middlewares/paramsEndpointValidator/CompanyParamsConstraint} 
+ * @function
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ * @return {Object} JSON with the User.
+ */
+module.exports.getCompany = function(req, res, next) {
+	Company
+		.findOne({'_id': req.params._id})
+		.populate('admin')
+		.exec(function (err, company) {
+			return (err)
+	        	? next(err)
+	        	: res.json({success: true, company: company});
+		});
+};
+
+/**
  * Create a new Company.
  * The values of parameters come inside the req.body. 
  * @see {/middlewares/paramsEndpointValidator/companyParamsConstraint} 

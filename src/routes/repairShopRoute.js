@@ -17,7 +17,7 @@ module.exports = function(app, passport, endpointValidator) {
 	 * @authentication This route requires Authentication. If authentication fails it will return an error.
 	 * @route {GET} /repairShops/
 	 * @queryparam {String} [filters] [phone name address company enabled]
-	 * @queryparam {String} [populate] (company employer)
+	 * @queryparam {String} [populate] (company employers)
 	 */
 	repairShops.get(
 		'/', 
@@ -58,7 +58,29 @@ module.exports = function(app, passport, endpointValidator) {
 	);
 
 	/**
-	 * Delete an RepairShop.
+	 * Update a RepairShop.
+	 *
+	 * @name Update a RepairShop 
+	 * @authentication This route requires Authentication. If authentication fails it will return an error.
+	 * @route {PUT} /RepairShops/:_id
+	 * @routeparam {String} :_id is the unique identifier for the RepairShop.
+	 * @bodyparam {String} phone 
+	 * @bodyparam {String} name 
+	 * @bodyparam {String} address 
+	 * @bodyparam {String} company
+	 * @bodyparam {String} version
+	 */
+	repairShops.put(
+	    '/:_id', 
+	    [
+		    endpointValidator.validateParams(paramsConstraint.updateRepairShop()),
+		    endpointValidator.hasAccess('admin')
+		],
+	    RepairShopCtrl.updateRepairShop
+	);
+
+	/**
+	 * Delete a RepairShop.
 	 *
 	 * @name Delete a RepairShop 
 	 * @authentication This route requires Authentication. If authentication fails it will return an error.
@@ -80,6 +102,7 @@ module.exports = function(app, passport, endpointValidator) {
 	 * @route {PUT} /repairShops/:_id/employers/
 	 * @routeparam {String} :_id is the unique identifier for the RepairShop.
 	 * @bodyparam {String} employerId 
+	 * @bodyparam {String} version
 	 */
 	repairShops.put(
 		'/:_id/employers', 
@@ -93,9 +116,10 @@ module.exports = function(app, passport, endpointValidator) {
 	/**
 	 * @name Delete a particular employer 
 	 * @authentication This route requires Authentication. If authentication fails it will return an error.
-	 * @route {PUT} /RepairShops/:_id
+	 * @route {PUT} /:_id/employers/:_idEmployer
 	 * @routeparam {String} :_id is the unique identifier for the RepairShop.
-	 * @routeparam {String} :_id is the unique identifier for the Employer.
+	 * @bodyparam {String} employerId is the unique identifier for the Employer.
+	 * @bodyparam {String} version
 	 */
 	repairShops.put(
 	    '/:_id/employers/:_idEmployer', 
