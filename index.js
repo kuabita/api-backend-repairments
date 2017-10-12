@@ -27,7 +27,7 @@ var config            = require('./src/config/database'),
     corsOptions       = require('./src/config/cors');
 
 mongoose.Promise = require('bluebird');
-mongoose.connect(config.database, function (err, res) {
+mongoose.connect(config.database, {useMongoClient: true}, function (err, res) {
     (err)
         ? console.log ('ERROR connecting to: ' + config.database + '. ' + err)
         : console.log ('Succeeded connected to: ' + config.database);

@@ -34,3 +34,8 @@ module.exports.validateFieldsPopulate = function(reqValues, allowValues) {
 	});
 	return (isSubset);
 }
+
+/*THIS METHOD SHOULD BE DELETED*/
+module.exports.true = function() {
+	return true;
+}

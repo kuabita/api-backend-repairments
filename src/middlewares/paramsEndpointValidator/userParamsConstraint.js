@@ -30,8 +30,8 @@ module.exports.createUser = function() {
 			}
 		},
 		query: {
-			allowed: true,
-			required: true,
+			allowed: false,
+			required: false,
 			fields: null,
 			errorMesage: 'Error in Query parameters'	
 		},
@@ -51,7 +51,7 @@ module.exports.createUser = function() {
 				},
 				password: {
 					required: true,
-					validate: true,
+					validate: commonConstraint.true,
 					errorMesage: 'Error trying to validate the field => Password.'
 				},
 			},
@@ -82,8 +82,8 @@ module.exports.authenticateUser = function() {
 			}
 		},
 		query: {
-			allowed: true,
-			required: true,
+			allowed: false,
+			required: false,
 			fields: null,
 			errorMesage: 'Error in Query parameters'	
 		},
@@ -98,7 +98,7 @@ module.exports.authenticateUser = function() {
 				},
 				password: {
 					required: true,
-					validate: true,
+					validate: commonConstraint.true,
 					errorMesage: 'Error trying to validate the field => Password.'
 				},
 			},

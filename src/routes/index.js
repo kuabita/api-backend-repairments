@@ -45,7 +45,7 @@ module.exports = function(app, passport, globalBruteforce) {
 	 */
 	app.post('/public/registerUser', [
 		globalBruteforce.prevent, 
-		endpointValidator.validateParams(userParamsConstraint.updateUser())
+		endpointValidator.validateParams(userParamsConstraint.createUser())
 		],
 		UserCtrl.createUser
 	);

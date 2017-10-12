@@ -126,16 +126,13 @@ module.exports.validateParams = function(endpointValidator) {
 		);
 	
 		p4 = validateValuesOfParams(req.params, endpointValidator.query.fields);
-	
 		p5 = validateValuesOfParams(req.body, endpointValidator.body.fields);
-		
 		p6 = validateValuesOfParams(endpointHelper.getFilterParametersFromUrl(req.query), endpointValidator.params.filters.fields);
-
 		p7 = validateValuesOfPopulateParams(req.query, endpointValidator.params.populate);
 
-		Promise.all([p1, p2, p3, p4, p5, p6, p7]).then(values => { 
+		Promise.all([p1, p2, p3, p4, p5, p6, p7]).then(values => {
 		    return next();
-		}).catch(reason => { 
+		}).catch(reason => {
 		    return res.status(403).json(error.createError(reason, 403));
 		});
 	}
