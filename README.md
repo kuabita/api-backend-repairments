@@ -12,6 +12,6 @@ https://docs.google.com/document/d/1GoCtxsiaExSaFw_JkbN9QVLwMHqVpFqJQBmSrjsh-pM/
 
 
 - To run the app:
-* Download the repo
-* npm install
-* node index.js
+1- Download the repo
+2- npm install
+3- node index.js
