@@ -71,7 +71,7 @@ module.exports = function(app, passport, endpointValidator, UserCtrl, paramsCons
 	    '/:_id', 
 	    [
 	    	endpointValidator.validateParams(paramsConstraint.deleteUser()),
-	   		endpointValidator.hasAccess('admin')
+	   		endpointValidator.hasAccess('root')
 	    ],
 	    UserCtrl.deleteUser
 	);

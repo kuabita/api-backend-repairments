@@ -84,9 +84,9 @@ module.exports.authenticateUser = function(req, res, next) {
  * @return {Object} JSON with the User updated.
  */
 module.exports.updateUser = function(req, res, next) {
-    var version = req.body.version;
+    var version = parseInt(req.body.version);
     delete req.body.version;
-    User.findOneAndUpdate(
+	User.findOneAndUpdate(
 		{'_id': req.params._id, 'version': version},
 		{'$set': req.body, '$inc': {'version': 1}},
 		{new: true},
@@ -145,16 +145,13 @@ module.exports.getUser = function(req, res, next) {
  * @return {Object} JSON with the User updated.
  */
 module.exports.deleteUser = function(req, res, next) {
-	var version = req.body.version;
-    delete req.body.version;
-    User.findOneAndUpdate(
-		{'_id': req.params._id, 'version': version},
-		{'$set': {enabled: false}, '$inc': {'version': 1}},
-		{new: true},
-		function(err, user) {
+	var version = parseInt(req.body.version);
+    User.deleteOne( 
+    	{'_id': req.params._id, 'version': version},
+    	function(err, user) {
 			return (err) 
 				? next(err)
-				: res.json({success: true, user: user});
+				: res.json({success: true, message: 'User delete successfully'});
 		}
 	);
 };

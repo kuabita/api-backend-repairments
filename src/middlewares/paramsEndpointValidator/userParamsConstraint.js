@@ -293,9 +293,15 @@ module.exports.deleteUser = function() {
 			errorMesage: 'Error in Query parameters'	
 		},
 		body: {
-			allowed: false,
-			required: false,
-			fields: null,
+			allowed: true,
+			required: true,
+			fields: {
+				version: {
+					required: true,
+					validate: commonConstraint.validateVersion,
+					errorMesage: 'Error trying to validate the field =>  Version.'
+				}
+			},	
 			errorMesage: 'Error in Body parameters'
 		}
 	}	
